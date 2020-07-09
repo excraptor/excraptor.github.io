@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+  <body>
+
+  <h1>My First Heading</h1>
+  <p>My first paragraph.</p>
+
+    <div id="content"></div>
+
+  <div id="inputFieldsContainer"></div>
+  
+  
+  </body>
+
+  <script>
+    let content = [];
+
+    let populateContent = function() {
+        let contentContainer = document.querySelector("#content");
+        contentContainer.innerHTML = null;
+
+        window.content.forEach(e => {
+            let el = document.createElement("div");
+            console.log(typeof e);
+            el.id = e.id;
+
+            for(let [key, value] of Object.entries(e)) {
+                let keySpan = document.createElement("span");
+                let valueSpan = document.createElement("span");
+
+                keySpan.innerHTML = key + ": ";
+                valueSpan.innerHTML = value + "; ";
+
+                el.appendChild(keySpan);
+                el.appendChild(valueSpan);
+                contentContainer.appendChild(el);
+            }
+
+            let deleteButton = document.createElement("button");
+            deleteButton.innerHTML = "Delete";
+            deleteButton.onclick = function deleteRow() {
+                let id = el.id;
+                const accessToken = document.querySelector("#accessToken" + id).value;
+                console.log(accessToken);
+                if(!accessToken){
+                    fetch("/error");
+                } else {
+                    let deleteTarget = window.location.pathname.slice(0,-1) + "/" + id + "/delete";
+                    fetch(deleteTarget, {
+                        method: 'DELETE',
+                        headers: {
+                            "access-token": accessToken
+                        }
+                    });
+                }
+            }
+            el.appendChild(deleteButton);
+
+            let accessTokenInput = document.createElement("input");
+            accessTokenInput.placeholder = "Enter your access token to delete";
+            accessTokenInput.id = "accessToken" + el.id;
+            el.appendChild(accessTokenInput);
+        });
+    }
+
+    populateContent();
+
+    function generateInputFields() {
+        const type = window.location.pathname;
+
+        if(type === "/users") {
+            const container = document.querySelector("#inputFieldsContainer");
+
+            let usernameContainer = document.createElement("div");
+            usernameContainer.id = "usernameContainer";
+
+            let usernameLabel = document.createElement("label");
+            usernameLabel.innerHTML = "Username: ";
+            usernameLabel.for = "username";
+
+            let usernameInput = document.createElement("input");
+            usernameInput.placeholder = "Enter your username";
+            usernameInput.id = "username";
+
+            usernameContainer.appendChild(usernameLabel);
+            usernameContainer.appendChild(usernameInput);
+            container.appendChild(usernameContainer);
+
+            //##################################
+
+            let passwordContainer = document.createElement("div");
+            passwordContainer.id = "passwordContainer";
+
+            let passwordLabel = document.createElement("label");
+            passwordLabel.innerHTML = "password: ";
+            passwordLabel.for = "password";
+
+            let passwordInput = document.createElement("input");
+            passwordInput.placeholder = "Enter your password";
+            passwordInput.id = "password";
+
+            passwordInput.type = "password";
+
+            passwordContainer.appendChild(passwordLabel);
+            passwordContainer.appendChild(passwordInput);
+            container.appendChild(passwordContainer);
+
+            //##################################
+
+            let emailContainer = document.createElement("div");
+            emailContainer.id = "emailContainer";
+
+            let emailLabel = document.createElement("label");
+            emailLabel.innerHTML = "email: ";
+            emailLabel.for = "email";
+
+            let emailInput = document.createElement("input");
+            emailInput.placeholder = "Enter your email";
+            emailInput.id = "email";
+
+            emailInput.type = "email"
+
+            emailContainer.appendChild(emailLabel);
+            emailContainer.appendChild(emailInput);
+            container.appendChild(emailContainer);
+
+            //##################################
+
+            let accessTokenContainer = document.createElement("div");
+            accessTokenContainer.id = "accessTokenContainer";
+
+            let accessTokenLabel = document.createElement("label");
+            accessTokenLabel.innerHTML = "accessToken: ";
+            accessTokenLabel.for = "accessToken";
+
+            let accessTokenInput = document.createElement("input");
+            accessTokenInput.placeholder = "Enter your accessToken";
+            accessTokenInput.id = "accessToken";
+
+            accessTokenContainer.appendChild(accessTokenLabel);
+            accessTokenContainer.appendChild(accessTokenInput);
+            container.appendChild(accessTokenContainer);
+
+            let sendButton = document.createElement("button");
+            sendButton.innerHTML = "Create user";
+            sendButton.onclick = function () {
+                fetch("/user/create", {
+                    method: 'post',
+                    headers: {
+                        "content-type":"application/json"
+                    },
+                    body: JSON.stringify({
+                        "username":document.querySelector("#username").value,
+                        "password":document.querySelector("#password").value,
+                        "email":document.querySelector("#email").value,
+                        "access_token":document.querySelector("#accessToken").value
+                    })
+                })
+            }
+            container.appendChild(sendButton);
+
+        } else if (0) {
+
+        } else if (0) {
+
+        }
+    }
+
+    generateInputFields();
+
+
+    function generate() {
+    fetch(window.location.pathname, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: document.querySelector("#text").value })
+    })
+  }
+  </script>
+</html>
